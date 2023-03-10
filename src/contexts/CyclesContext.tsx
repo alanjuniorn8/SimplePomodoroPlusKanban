@@ -1,13 +1,11 @@
-import { useState, createContext, ReactNode } from 'react'
-
-interface Cycle {
-  id: string
-  task: string
-  minutesAmout: number
-  startDate: Date
-  interruptedDate?: Date
-  finishedDate?: Date
-}
+import { useState, createContext, ReactNode, useReducer } from 'react'
+import { Cycle, cyclesReducer } from '../reducers/cycles/reducer'
+import {
+  ActionTypes,
+  addNewCycleAction,
+  finishCurrrentCycleAction,
+  interruptCurrrentCycleAction,
+} from '../reducers/cycles/actions'
 
 interface CreateCycleFormData {
   task: string
@@ -34,26 +32,39 @@ interface CyclesContextProviderProps {
 export function CyclesContextProvider({
   children,
 }: CyclesContextProviderProps) {
-  const [cycles, setCycles] = useState<Cycle[]>([])
-  const [activeCycleId, setActiveCycleId] = useState<string | null>(null)
+  const [cyclesState, dispatch] = useReducer(cyclesReducer, {
+    cycles: [],
+    activeCycleId: null,
+  })
+
   const [amountSecondsPassed, setAmountSecondsPassed] = useState(0)
 
+  const { cycles, activeCycleId } = cyclesState
   const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
 
   function setAmountSecondsPassedProxy(seconds: number) {
     setAmountSecondsPassed(seconds)
   }
 
+  function createNewCycle(data: CreateCycleFormData) {
+    const id = String(new Date().getTime())
+    const newCycle: Cycle = {
+      id,
+      task: data.task,
+      minutesAmout: data.minutesAmount,
+      startDate: new Date(),
+    }
+
+    dispatch(addNewCycleAction(newCycle))
+    setAmountSecondsPassed(0)
+  }
+
+  function interruptCycle() {
+    dispatch(interruptCurrrentCycleAction())
+  }
+
   function markCurrentCycleAsFinished(): void {
-    setCycles((state) =>
-      state.map((cycle) => {
-        if (cycle.id === activeCycleId) {
-          return { ...cycle, finishedDate: new Date() }
-        } else {
-          return cycle
-        }
-      }),
-    )
+    dispatch(finishCurrrentCycleAction())
   }
 
   return (
@@ -72,32 +83,4 @@ export function CyclesContextProvider({
       {children}
     </CyclesContext.Provider>
   )
-
-  function createNewCycle(data: CreateCycleFormData) {
-    const id = String(new Date().getTime())
-    const newCycle: Cycle = {
-      id,
-      task: data.task,
-      minutesAmout: data.minutesAmount,
-      startDate: new Date(),
-    }
-
-    setCycles((state) => [...state, newCycle])
-    setActiveCycleId(id)
-    setAmountSecondsPassed(0)
-  }
-
-  function interruptCycle() {
-    setCycles((state) =>
-      state.map((cycle) => {
-        if (cycle.id === activeCycleId) {
-          return { ...cycle, interruptedDate: new Date() }
-        } else {
-          return cycle
-        }
-      }),
-    )
-
-    setActiveCycleId(null)
-  }
 }
