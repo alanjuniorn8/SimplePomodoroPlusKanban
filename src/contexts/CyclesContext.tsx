@@ -4,6 +4,7 @@ import {
   ReactNode,
   useReducer,
   useEffect,
+  useContext,
 } from 'react'
 import { Cycle, cyclesReducer } from '../reducers/cycles/reducer'
 import {
@@ -12,6 +13,8 @@ import {
   interruptCurrrentCycleAction,
 } from '../reducers/cycles/actions'
 import { differenceInSeconds } from 'date-fns'
+import { ListsContext } from './ListsContext'
+import { ListType } from '../enums/List'
 
 interface CreateCycleFormData {
   task: string
@@ -46,7 +49,7 @@ export function CyclesContextProvider({
     },
     (initialState) => {
       const storedStateAsJSON = localStorage.getItem(
-        '@ignite-Timer:cycles-state=1.0.0',
+        '@Kanban-Timer:cycles-state=1.0.0',
       )
       if (storedStateAsJSON) return JSON.parse(storedStateAsJSON)
 
@@ -66,8 +69,10 @@ export function CyclesContextProvider({
   useEffect(() => {
     const stateJSON = JSON.stringify(cyclesState)
 
-    localStorage.setItem('@ignite-Timer:cycles-state=1.0.0', stateJSON)
+    localStorage.setItem('@Kanban-Timer:cycles-state=1.0.0', stateJSON)
   }, [cyclesState])
+
+  const { moveCard } = useContext(ListsContext)
 
   function setAmountSecondsPassedProxy(seconds: number) {
     setAmountSecondsPassed(seconds)
@@ -75,15 +80,19 @@ export function CyclesContextProvider({
 
   function createNewCycle(data: CreateCycleFormData) {
     const id = String(new Date().getTime())
+    const cardJSON = JSON.parse(data.task)
+    const cardId = cardJSON.cardId
+    const cardTask = cardJSON.cardTask
     const newCycle: Cycle = {
       id,
-      task: data.task,
+      task: cardTask,
       minutesAmout: data.minutesAmount,
       startDate: new Date(),
     }
 
     dispatch(addNewCycleAction(newCycle))
     setAmountSecondsPassed(0)
+    moveCard(ListType.TODO, ListType.IN_PROGRESS, cardId)
   }
 
   function interruptCycle() {

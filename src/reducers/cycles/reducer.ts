@@ -19,7 +19,8 @@ export function cyclesReducer(state: CyclesState, action: any) {
   switch (action.type) {
     case ActionTypes.ADD_NEW_CYCLE:
       return produce(state, (draft) => {
-        draft.cycles.push(action.payload.newCycle)
+        if (draft.cycles.length > 7) draft.cycles.splice(6)
+        draft.cycles.unshift(action.payload.newCycle)
         draft.activeCycleId = action.payload.newCycle.id
       })
     case ActionTypes.INTERRUPT_CURRENT_CYCLE: {
