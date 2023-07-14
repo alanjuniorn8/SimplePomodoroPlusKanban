@@ -9,6 +9,7 @@ import { CyclesContextProvider } from './contexts/CyclesContext'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { ListsContextProvider } from './contexts/ListsContext'
+import { CountDownContextProvider } from './contexts/CountDownCycle'
 
 export function App() {
   return (
@@ -17,7 +18,9 @@ export function App() {
         <BrowserRouter>
           <ListsContextProvider>
             <CyclesContextProvider>
-              <Router />
+              <CountDownContextProvider>
+                <Router />
+              </CountDownContextProvider>
             </CyclesContextProvider>
           </ListsContextProvider>
         </BrowserRouter>

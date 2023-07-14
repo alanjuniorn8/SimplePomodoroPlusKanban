@@ -15,6 +15,7 @@ import {
 import { differenceInSeconds } from 'date-fns'
 import { ListsContext } from './ListsContext'
 import { ListType } from '../enums/List'
+import sound from '../assets/alarm.wav'
 
 interface CreateCycleFormData {
   task: string
@@ -71,6 +72,13 @@ export function CyclesContextProvider({
 
     localStorage.setItem('@Kanban-Timer:cycles-state=1.0.0', stateJSON)
   }, [cyclesState])
+
+  const [audio] = useState(new Audio(sound))
+  const [playing, setPlaying] = useState(false)
+
+  useEffect(() => {
+    !activeCycle ? audio.play() : audio.pause()
+  }, [activeCycle])
 
   const { moveCard } = useContext(ListsContext)
 
