@@ -1,6 +1,13 @@
-import { ReactNode, createContext, useContext, useEffect } from 'react'
+import {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { CyclesContext } from './CyclesContext'
 import { differenceInSeconds } from 'date-fns'
+import sound from '../assets/alarm.wav'
 
 interface CountDownContextType {
   minutes: string
@@ -67,6 +74,13 @@ export function CountDownContextProvider({
   useEffect(() => {
     if (activeCycle) document.title = `${minutes}:${seconds}`
   }, [minutes, seconds, activeCycle])
+
+  const [audio] = useState(new Audio(sound))
+  const [playing, setPlaying] = useState(false)
+
+  useEffect(() => {
+    !activeCycle ? audio.play() : audio.pause()
+  }, [activeCycle])
 
   return (
     <CountDownContext.Provider

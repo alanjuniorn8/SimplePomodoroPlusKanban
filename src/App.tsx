@@ -9,7 +9,7 @@ import { CyclesContextProvider } from './contexts/CyclesContext'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { ListsContextProvider } from './contexts/ListsContext'
-import { CountDownContextProvider } from './contexts/CountDownCycle'
+import { CountDownContextProvider } from './contexts/CountDownContext'
 
 export function App() {
   return (
