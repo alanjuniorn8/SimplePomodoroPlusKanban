@@ -13,9 +13,9 @@ export function Header() {
         <NavLink to="/board" title="Board">
           <Kanban size={24} />
         </NavLink>
-        <NavLink to="/history" title="History">
+        {/* <NavLink to="/history" title="History">
           <Scroll size={24} />
-        </NavLink>
+        </NavLink> */}
       </nav>
     </HeaderContainer>
   )
