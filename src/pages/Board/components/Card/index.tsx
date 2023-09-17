@@ -70,9 +70,8 @@ export default function Card(props: {
     },
   })
 
-  const handleTaskChage = useCallback(
-    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      const newTask = e.target.value
+  const handleTaskChange = useCallback(
+    (newTask: string) => {
       props.onUpdate(props.card.id, newTask, props.card.list)
     },
     [props],
@@ -88,7 +87,8 @@ export default function Card(props: {
       />
       <textarea
         value={props.card.task}
-        onChange={(e) => handleTaskChage(e)}
+        onChange={(e) => handleTaskChange(e.target.value)}
+        onBlur={(e) => handleTaskChange(e.target.value.trim())}
         maxLength={50}
       />
     </CardContainer>
